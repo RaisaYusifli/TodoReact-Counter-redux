@@ -1,25 +1,87 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useCallback, useRef, useState } from "react";
+import Todos from "./Todos";
+import InputForm from "./InputForm";
+import Terms from "./Terms";
+import User from "./User";
+import { withTheme } from "./withData";
+import { ErrorBoundry } from "./ErrorBoundry";
+import { Counter } from "./Counter";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodoItem,deleteTodoItem, editTodoItem } from "./store/todoSlice";
 
-function App() {
+function App({ theme }) {
+  // const [list, setList] = useState([]);
+  //[{text:"todo1", id:1,completed:false}]
+  
+  const list=useSelector((state)=>state.todos);
+  const dispatch=useDispatch();
+
+  const formRef = useRef(null);
+
+  const submitHandler = (e, inputVal) => {
+    e.preventDefault();
+    if (!inputVal.trim().length) {
+      formRef.current.focus();
+    } else {
+      // setList([
+      //   ...list,
+      //   { id: list.length + 1, completed: false, text: inputVal },
+      // ]);
+      dispatch(
+        addTodoItem({id:list.length+1,completed:false,text:inputVal})
+      )
+    }
+  };
+
+  const deleteHandlerTodo = (id) => {
+    // const filteredList = list.filter((item) => item.id !== id);
+    // console.log(filteredList);
+    // setList(filteredList);
+    dispatch(
+      deleteTodoItem({id})
+    )
+  };
+
+  const editHandlerTodo = (item) => {
+    // const transformedList = list.map((li) => {
+    //   if (li.id === item.id) {
+    //     return item;
+    //   }
+    //   return li;
+    // });
+    // setList(transformedList);
+    dispatch(
+      editTodoItem(item)
+    )
+  };
+
+  // const handleReserTodos = useCallback(() => {
+  //   setList([]);
+  // }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Counter />
+      {theme}
+      <ErrorBoundry>
+        <User anotherProps="anoterProps data" />
+      </ErrorBoundry>
+      {/* {list.length<2 && <InputForm submitHandler={submitHandler}/>}componentWillUnmount  */}
+      <InputForm ref={formRef} submitHandler={submitHandler} />
+      <Todos
+        deleteHandlerTodo={deleteHandlerTodo}
+        editHandlerTodo={editHandlerTodo}
+        list={list}
+      />
+      {/* {list.length<2 &&<Terms/>} */}
+      {/* <Terms shouldExtend={list.length<2}/> */}
+      <Terms
+        // handleResetTodos={handleReserTodos}
+        shouldExtend={list.length > 2}
+      />
     </div>
   );
 }
 
-export default App;
+export default withTheme(App);

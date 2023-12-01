@@ -1,23 +1,39 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteTodoItem, editTodoItem, todoDelete } from "./store/todoSlice";
+
 export const TodoItem = ({
   id,
   text,
-  completed,
-  deleteHandlerTodo,
-  editHandlerTodo,
+  completed
 }) => {
+  const dispatch = useDispatch();
+
   const [isEdited, setEdit] = useState(false);
   const [itemTxt, setTxt] = useState(text);
 
-  const editHandler = () => {
-    if (isEdited) {
-      editHandlerTodo({ id, completed, text: itemTxt });
-    }
-    setEdit(!isEdited);
+  // const editHandler = () => {
+  //   if (isEdited) {
+  //     editHandlerTodo({ id, completed, text: itemTxt });
+  //   }
+  //   setEdit(!isEdited);
+  // };
+
+  // const toggleHandler = () => {
+  //   editHandlerTodo({ id, completed: !completed, text: itemTxt });
+  // };
+
+  const deleteTodeItemHandler = (id) => {
+    // dispatch(deleteTodoItem({ id }));
+    dispatch(todoDelete(id));
   };
 
+  const editHandler = () => {
+    dispatch(editTodoItem({ id, completed, text: itemTxt }));
+    setEdit(!isEdited);
+  };
   const toggleHandler = () => {
-    editHandlerTodo({ id, completed: !completed, text: itemTxt });
+    dispatch(editTodoItem({ id, completed: !completed, text }));
   };
 
   return (
@@ -36,7 +52,7 @@ export const TodoItem = ({
       {!isEdited && (
         <button
           onClick={() => {
-            deleteHandlerTodo(id);
+            deleteTodeItemHandler(id);
           }}
         >
           Delete

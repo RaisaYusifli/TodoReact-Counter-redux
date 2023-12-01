@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice } from "@reduxjs/toolkit";
 
 const counterSlice=createSlice({
     name:"counter",
@@ -17,5 +17,14 @@ const counterSlice=createSlice({
 })
 
 export const {increment,decrement,incrementByX}=counterSlice.actions;
+
+export const incrementMiddleListener=createListenerMiddleware();
+
+incrementMiddleListener.startListening({
+    actionCreator:increment,
+    effect:(action,listenerApi)=>{
+        console.log(action);
+    }
+})
 
 export default counterSlice.reducer;

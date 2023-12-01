@@ -1,12 +1,16 @@
 import {TodoItem} from './TodoItem';
+import { useSelector } from 'react-redux';
 
-const Todos = ({ list, deleteHandlerTodo,editHandlerTodo }) => {
+const Todos = () => {
+  const todoObj = useSelector(({ todos }) => todos);
+
+  if(todoObj.status==="PENDING"){
+    return <p>Loading...</p>
+  }
     return (
       <ul>
-        {list.map((item) => (
+        {todoObj.list?.map((item) => (
           <TodoItem
-            deleteHandlerTodo={deleteHandlerTodo}
-            editHandlerTodo={editHandlerTodo}
             key={item.id}
             {...item}
           />
